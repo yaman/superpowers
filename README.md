@@ -12,7 +12,7 @@ It starts from the moment you fire up your coding agent. As soon as it sees that
 
 Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true ATDD (Acceptance Test-Driven Development), YAGNI (You Aren't Gonna Need It), and DRY. 
+After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes ATDD — each acceptance criterion becomes a failing end-to-end test that stays red while paired frontend and backend TDD inner loops drive it green — plus YAGNI (You Aren't Gonna Need It) and DRY. 
 
 Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
 
@@ -161,7 +161,7 @@ already use it in another harness.
 
 4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
 
-5. **acceptance-test-driven-development** - Activates during implementation. Starts from user-facing acceptance criteria, drives implementation by defining what "done" looks like from the outside before writing any code.
+5. **acceptance-test-driven-development** - Activates during implementation. For each acceptance criterion: write one failing end-to-end acceptance test (outer loop), then drive it green through sequential frontend and backend TDD inner loops — each inner loop red/green/refactoring unit and component tests — until the outer acceptance test passes.
 
 6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
 
@@ -174,7 +174,7 @@ already use it in another harness.
 ### Skills Library
 
 **Testing**
-- **acceptance-test-driven-development** - Define acceptance criteria first, implement until all criteria pass (includes testing anti-patterns reference)
+- **acceptance-test-driven-development** - One failing acceptance test per AC anchors the outer loop; paired frontend and backend TDD inner loops (unit, component, and CDC tests) iterate until the outer acceptance test turns green
 
 **Debugging**
 - **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
@@ -197,7 +197,7 @@ already use it in another harness.
 
 ## Philosophy
 
-- **Acceptance Test-Driven Development** - Define what done looks like from the outside before writing any code
+- **Acceptance Test-Driven Development** - A single failing acceptance test per criterion drives the outer loop; inner TDD loops for frontend and backend keep turning red then green until the outer test passes
 - **Systematic over ad-hoc** - Process over guessing
 - **Complexity reduction** - Simplicity as primary goal
 - **Evidence over claims** - Verify before declaring success
