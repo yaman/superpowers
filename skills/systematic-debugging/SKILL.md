@@ -208,7 +208,7 @@ You MUST complete each phase before proceeding to the next.
    - Are we "sticking with it through sheer inertia"?
    - Should we refactor architecture vs. continue fixing symptoms?
 
-   **Discuss with your human partner before attempting more fixes**
+   **Discuss with the code owner before attempting more fixes.**
 
    This is NOT a failed hypothesis - this is a wrong architecture.
 
@@ -231,9 +231,9 @@ If you catch yourself thinking:
 
 **If 3+ fixes failed:** Question the architecture (see Phase 4.5)
 
-## your human partner's Signals You're Doing It Wrong
+## Signals You're Doing It Wrong
 
-**Watch for these redirections:**
+**Watch for these redirections from the code owner:**
 - "Is that not happening?" - You assumed without verifying
 - "Will it show us...?" - You should have added evidence gathering
 - "Stop guessing" - You're proposing fixes without understanding
