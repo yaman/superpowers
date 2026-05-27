@@ -130,7 +130,7 @@ Return: Summary of what you found and what you fixed.
 **Exploratory debugging:** You don't know what's broken yet
 **Shared state:** Agents would interfere (editing same files, using same resources)
 
-## Real Example from Session
+## Real Example
 
 **Scenario:** 6 test failures across 3 files after major refactoring
 
@@ -174,7 +174,6 @@ After agents return:
 
 ## Real-World Impact
 
-From debugging session (2025-10-03):
 - 6 failures across 3 files
 - 3 agents dispatched in parallel
 - All investigations completed concurrently
