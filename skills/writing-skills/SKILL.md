@@ -158,16 +158,16 @@ When the description was changed to just "Use when executing implementation plan
 **The trap:** Descriptions that summarize workflow create a shortcut Claude will take. The skill body becomes documentation Claude skips.
 
 ```yaml
-# ❌ BAD: Summarizes workflow - Claude may follow this instead of reading skill
+# Bad: Summarizes workflow - Claude may follow this instead of reading skill
 description: Use when executing plans - dispatches subagent per task with code review between tasks
 
-# ❌ BAD: Too much process detail
+# Bad: Too much process detail
 description: Use for TDD - write test first, watch it fail, write minimal code, refactor
 
-# ✅ GOOD: Just triggering conditions, no workflow summary
+# Good: Just triggering conditions, no workflow summary
 description: Use when executing implementation plans with independent tasks in the current session
 
-# ✅ GOOD: Triggering conditions only
+# Good: Triggering conditions only
 description: Use when implementing any feature or bugfix, before writing implementation code
 ```
 
@@ -180,19 +180,19 @@ description: Use when implementing any feature or bugfix, before writing impleme
 - **NEVER summarize the skill's process or workflow**
 
 ```yaml
-# ❌ BAD: Too abstract, vague, doesn't include when to use
+# Bad: Too abstract, vague, doesn't include when to use
 description: For async testing
 
-# ❌ BAD: First person
+# Bad: First person
 description: I can help you with async tests when they're flaky
 
-# ❌ BAD: Mentions technology but skill isn't specific to it
+# Bad: Mentions technology but skill isn't specific to it
 description: Use when tests use setTimeout/sleep and are flaky
 
-# ✅ GOOD: Starts with "Use when", describes problem, no workflow
+# Good: Starts with "Use when", describes problem, no workflow
 description: Use when tests have race conditions, timing dependencies, or pass/fail inconsistently
 
-# ✅ GOOD: Technology-specific skill with explicit trigger
+# Good: Technology-specific skill with explicit trigger
 description: Use when using React Router and handling authentication redirects
 ```
 
@@ -207,8 +207,7 @@ Use words Claude would search for:
 ### 3. Descriptive Naming
 
 **Use active voice, verb-first:**
-- ✅ `creating-skills` not `skill-creation`
-- ✅ `condition-based-waiting` not `async-test-helpers`
+- `condition-based-waiting` not `async-test-helpers`
 
 ### 4. Token Efficiency (Critical)
 
@@ -223,31 +222,31 @@ Use words Claude would search for:
 
 **Move details to tool help:**
 ```bash
-# ❌ BAD: Document all flags in SKILL.md
+# Bad: Document all flags in SKILL.md
 search-conversations supports --text, --both, --after DATE, --before DATE, --limit N
 
-# ✅ GOOD: Reference --help
+# Good: Reference --help
 search-conversations supports multiple modes and filters. Run --help for details.
 ```
 
 **Use cross-references:**
 ```markdown
-# ❌ BAD: Repeat workflow details
+# Bad: Repeat workflow details
 When searching, dispatch subagent with template...
 [20 lines of repeated instructions]
 
-# ✅ GOOD: Reference other skill
+# Good: Reference other skill
 Always use subagents (50-100x context savings). REQUIRED: Use [other-skill-name] for workflow.
 ```
 
 **Compress examples:**
 ```markdown
-# ❌ BAD: Verbose example (42 words)
+# Bad: Verbose example (42 words)
 your human partner: "How did we handle authentication errors in React Router before?"
 You: I'll search past conversations for React Router authentication patterns.
 [Dispatch subagent with search query: "React Router authentication error handling 401"]
 
-# ✅ GOOD: Minimal example (20 words)
+# Good: Minimal example (20 words)
 Partner: "How did we handle auth errors in React Router?"
 You: Searching...
 [Dispatch subagent → synthesis]
@@ -266,10 +265,10 @@ wc -w skills/path/SKILL.md
 ```
 
 **Name by what you DO or core insight:**
-- ✅ `condition-based-waiting` > `async-test-helpers`
-- ✅ `using-skills` not `skill-usage`
-- ✅ `flatten-with-flags` > `data-structure-refactoring`
-- ✅ `root-cause-tracing` > `debugging-techniques`
+- `condition-based-waiting` > `async-test-helpers`
+- `using-skills` not `skill-usage`
+- `flatten-with-flags` > `data-structure-refactoring`
+- `root-cause-tracing` > `debugging-techniques`
 
 **Gerunds (-ing) work well for processes:**
 - `creating-skills`, `testing-skills`, `debugging-with-logs`
@@ -280,10 +279,10 @@ wc -w skills/path/SKILL.md
 **When writing documentation that references other skills:**
 
 Use skill name only, with explicit requirement markers:
-- ✅ Good: `**REQUIRED SUB-SKILL:** Use superpowers:test-driven-development`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand superpowers:systematic-debugging`
-- ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
-- ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
+- Good: `**REQUIRED SUB-SKILL:** Use superpowers:test-driven-development`
+- Good: `**REQUIRED BACKGROUND:** You MUST understand superpowers:systematic-debugging`
+- Bad: `See skills/testing/test-driven-development` (unclear if required)
+- Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 
 **Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
 
@@ -313,7 +312,7 @@ digraph when_flowchart {
 - Linear instructions → Numbered lists
 - Labels without semantic meaning (step1, helper2)
 
-See @graphviz-conventions.dot for graphviz style rules.
+See [graphviz-conventions.dot](graphviz-conventions.dot) for graphviz style rules.
 
 **Visualizing for your human partner:** Use `render-graphs.js` in this directory to render a skill's flowcharts to SVG:
 ```bash
@@ -466,13 +465,12 @@ Skills that enforce discipline (like TDD) need to resist rationalization. Agents
 
 Don't just state the rule - forbid specific workarounds:
 
-<Bad>
+**Bad:**
 ```markdown
 Write code before test? Delete it.
 ```
-</Bad>
 
-<Good>
+**Good:**
 ```markdown
 Write code before test? Delete it. Start over.
 
@@ -482,7 +480,6 @@ Write code before test? Delete it. Start over.
 - Don't look at it
 - Delete means delete
 ```
-</Good>
 
 ### Address "Spirit vs Letter" Arguments
 
@@ -553,7 +550,7 @@ Run same scenarios WITH skill. Agent should now comply.
 
 Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
 
-**Testing methodology:** See @testing-skills-with-subagents.md for the complete testing methodology:
+**Testing methodology:** See [testing-skills-with-subagents.md](testing-skills-with-subagents.md) for the complete testing methodology:
 - How to write pressure scenarios
 - Pressure types (time, sunk cost, authority, exhaustion)
 - Plugging holes systematically
@@ -561,22 +558,22 @@ Agent found new rationalization? Add explicit counter. Re-test until bulletproof
 
 ## Anti-Patterns
 
-### ❌ Narrative Example
+### Narrative Example
 "In session 2025-10-03, we found empty projectDir caused..."
 **Why bad:** Too specific, not reusable
 
-### ❌ Multi-Language Dilution
+### Multi-Language Dilution
 example-js.js, example-py.py, example-go.go
 **Why bad:** Mediocre quality, maintenance burden
 
-### ❌ Code in Flowcharts
+### Code in Flowcharts
 ```dot
 step1 [label="import fs"];
 step2 [label="read file"];
 ```
 **Why bad:** Can't copy-paste, hard to read
 
-### ❌ Generic Labels
+### Generic Labels
 helper1, helper2, step3, pattern4
 **Why bad:** Labels should have semantic meaning
 
