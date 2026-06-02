@@ -128,7 +128,7 @@ A contract should **not** include:
 - Internal provider implementation details
 - DB schemas
 - ORM behavior
-- Unused fields “just in case”
+- Unused fields "just in case"
 - Behavior unrelated to the current AC
 
 ---
@@ -244,7 +244,7 @@ After the contract file reaches the backend, the **first backend contract-testin
 
 This is important.
 
-Do **not** begin by implementing the endpoint and checking it manually.  
+Do **not** begin by implementing the endpoint and checking it manually.
 Do **not** begin by writing backend business logic in isolation.
 
 Begin by writing the provider verification test first.
@@ -260,7 +260,7 @@ This is the backend RED state for contract testing.
 This matches the ATDD rule:
 
 - Frontend writes consumer contract first.
-- Backend writes provider verification test first.[file:4]
+- Backend writes provider verification test first.
 
 ---
 
@@ -289,7 +289,7 @@ Contract tests replace:
 
 - Manual mock servers that drift from reality
 - Ad-hoc JSON fixtures with no verification
-- Assumptions that “frontend and backend will line up later”
+- Assumptions that "frontend and backend will line up later"
 - Mocking cross-service behavior directly in unit tests
 
 Contract tests do **not** replace:
@@ -337,7 +337,7 @@ A bad contract:
 
 - Over-specifies implementation details
 - Includes fields the consumer does not actually use
-- Becomes a snapshot of the provider’s internal representation
+- Becomes a snapshot of the provider's internal representation
 - Breaks every time formatting changes but behavior does not
 - Is not portable between frontend and backend projects
 - Is so vague that incompatible implementations still pass
@@ -374,10 +374,10 @@ Use matching strategies that preserve meaning without creating brittleness.
 
 Prefer:
 
-- “String matching expected semantic pattern”
-- “ID is present and of the expected type”
-- “Array contains objects with required fields”
-- “Timestamp matches expected format”
+- "String matching expected semantic pattern"
+- "ID is present and of the expected type"
+- "Array contains objects with required fields"
+- "Timestamp matches expected format"
 
 Avoid:
 
@@ -427,7 +427,7 @@ When a new AC requires more fields or behavior:
 - Re-run provider verification.
 - Re-run acceptance tests if user-visible behavior changes.
 
-Avoid “future-proofing” contracts by adding speculative fields.
+Avoid "future-proofing" contracts by adding speculative fields.
 
 If a contract must change incompatibly:
 
@@ -512,7 +512,7 @@ Do not silently widen or loosen a contract just to make tests pass. That hides r
 
 ## Final Rule
 
-A service boundary is not complete just because one side “seems to work.”
+A service boundary is not complete just because one side "seems to work."
 
 It is complete when:
 
