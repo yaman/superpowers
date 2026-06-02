@@ -1,6 +1,15 @@
 ---
 name: acceptance-test-driven-development
-description: Use when implementing any user-facing feature or user story, before writing implementation code or unit tests
+description: >
+  Use when implementing any user-facing feature or user story.
+  For each Acceptance Criterion (AC), write one failing outer acceptance test first,
+  then drive it green through sequential frontend and backend TDD inner loops
+  (component, unit, and CDC tests) — each loop red/green/refactor — until the
+  outer acceptance test passes. Never write implementation code before both
+  the outer acceptance test and the relevant inner test are red.
+references:
+  - scenario-writing-guide.md
+  - contract-testing.md
 ---
 
 # Acceptance Test Driven Development (ATDD)
@@ -9,13 +18,22 @@ description: Use when implementing any user-facing feature or user story, before
 
 This skill defines how to implement user-facing features using **Acceptance Test Driven Development (ATDD)** with **ports & adapters (hexagonal) architecture** on both frontend and backend.
 
+The core structure is a **double loop**:
+
+- **Outer loop** — one failing acceptance test per AC. This test is the sole authority on whether the AC is done. It stays red until all inner loops complete.
+- **Inner loops** — sequential frontend and backend TDD loops, each following red → green → refactor, that incrementally build up the behavior required to turn the outer acceptance test green.
+
 Goals:
 
 - Start from clearly defined Acceptance Criteria (ACs).
-- Express each AC as an automated acceptance test.
-- Drive frontend and backend design from these tests.
+- Express each AC as a single automated outer acceptance test.
+- Drive frontend and backend design from that outer test via paired inner loops.
 - Keep domain logic pure and decoupled.
 - Use consumer-driven contracts for service integration.
+
+> **Sub-files for this skill:**
+> - [`scenario-writing-guide.md`](scenario-writing-guide.md) — how to write correct, automatable Given/When/Then scenarios.
+> - [`contract-testing.md`](contract-testing.md) — consumer-driven contract workflow between frontend and backend.
 
 ---
 
@@ -36,6 +54,10 @@ Before using this skill:
   - Playwright, Cypress, Selenium.
   - Cucumber/Gherkin or similar BDD frameworks.
 
+- **Outer loop**: The acceptance test for an AC. Stays red while inner loops execute. Turning it green is the definition of done for that AC.
+
+- **Inner loop**: A frontend or backend TDD loop — component, unit, or CDC tests — that drives a slice of behavior red → green → refactor.
+
 - **Ports & adapters / hexagonal architecture**:
   - Domain core (pure logic) depends on abstract ports.
   - UI, HTTP, DB, and other infrastructure are adapters implementing those ports.
@@ -43,6 +65,7 @@ Before using this skill:
 - **Consumer-driven contract (CDC)**:
   - A contract that defines expectations of an API from the consumer side.
   - Implemented with tools like Pact, Pactflow, or API Blueprint.
+  - Acts as the handoff artifact between the frontend inner loop and the backend inner loop.
 
 ---
 
@@ -113,7 +136,7 @@ Example:
 - When I add "They came to test box"
 - Then I see that item in the list
 
-Confirm each AC with the human partner.
+Confirm each AC with the human partner. See [`scenario-writing-guide.md`](scenario-writing-guide.md) for rules and anti-patterns.
 
 ### Step 2 - Create Executable Acceptance Test (RED)
 
@@ -134,22 +157,24 @@ For each AC:
 
 If the test passes immediately, it is not a valid ATDD starting point. Fix the test so that it fails for the right reason.
 
+This failing acceptance test is the **outer loop**. It must remain red until all inner loops for this AC are complete.
+
 ### Step 3 - Run Paired Frontend and Backend Loops
 
 For this AC, you will run **paired inner loops**:
 
 - For loop index `n` (starting from 1):
-  - Run **Frontend Loop `n`**.
-  - Then run **Backend Loop `n`**.
-- Repeat for `n+1` as needed while the AC's acceptance test still fails.
+  - Run **Frontend Loop `n`** (component test → domain unit test → CDC consumer test).
+  - Then run **Backend Loop `n`** (CDC provider test → integration test → domain unit test).
+- Repeat for `n+1` as needed while the outer acceptance test still fails.
 
-The acceptance test is the only authority on completion for this AC.
+Each inner loop follows its own red → green → refactor cycle. The outer acceptance test is the only authority on completion for this AC.
 
 ### Step 4 - Check AC Completion
 
 An AC is considered complete when:
 
-- The acceptance test passes against the real frontend and real backend implementation in a test environment.
+- The outer acceptance test passes against the real frontend and real backend implementation in a test environment.
 - All unit/component/CDC tests related to this AC are also green.
 
 Only then mark the AC as done.
@@ -199,7 +224,7 @@ Implement or adjust UI components so that:
   - They render based on those inputs.
 - They do not contain business rules or direct network calls.
 
-Run the component test and ensure it passes. The acceptance test will likely still fail at this stage.
+Run the component test and ensure it passes. The outer acceptance test will likely still fail at this stage.
 
 ### FE4 - Domain Unit Test (RED)
 
@@ -242,9 +267,11 @@ If this AC requires backend communication:
 
 5. Run the CDC test until it passes.
 
+The generated contract artifact is the handoff to Backend Loop `n`. See [`contract-testing.md`](contract-testing.md) for the full workflow.
+
 ### FE7 - Acceptance Test Against Mock Backend
 
-Run the acceptance test for this AC using:
+Run the outer acceptance test for this AC using:
 
 - Real frontend implementation.
 - Mock backend based on the consumer contract (Pact stub or equivalent).
@@ -289,10 +316,12 @@ This loop is responsible for:
 
 Implement a provider CDC test based on the consumer contract:
 
-- Load the consumer contract.
+- Load the consumer contract artifact transferred from the frontend loop.
 - Verify that backend responses will match the contract.
 
 Run the provider CDC test and confirm it fails initially.
+
+See [`contract-testing.md`](contract-testing.md) for the transfer and verification workflow.
 
 ### BE2 - Integration Test (RED)
 
@@ -351,12 +380,12 @@ When both integration and provider CDC tests are green, Backend Loop `n` is comp
 
 ### BE7 - Acceptance Test Against Real Backend
 
-Run the acceptance test for this AC using:
+Run the outer acceptance test for this AC using:
 
 - Real frontend implementation.
 - Real backend implementation in a test environment.
 
-If the acceptance test still fails:
+If the outer acceptance test still fails:
 
 - Start Frontend Loop `n+1` for this AC.
 
@@ -432,10 +461,36 @@ In CI/CD pipelines:
 
 ## Summary
 
-ATDD in this skill:
+ATDD in this skill is a **double loop** per AC:
 
-- Starts from Acceptance Criteria and automated acceptance tests.
-- Uses ports & adapters / hexagonal architecture on both frontend and backend.
-- Drives implementation through sequential frontend and backend loops per AC.
-- Uses consumer-driven contracts as the only sanctioned form of service-level mocking.
-- Requires all tests and checks to pass locally before pushing and again in CI/CD before deployment.
+```
+┌─────────────────────────────────────────────────────┐
+│  OUTER LOOP: Acceptance Test (RED → stays red)      │
+│                                                     │
+│  ┌───────────────────────────────────────────────┐  │
+│  │  INNER LOOP n: Frontend TDD                   │  │
+│  │  Component test RED → GREEN → Refactor        │  │
+│  │  Domain unit test RED → GREEN → Refactor      │  │
+│  │  CDC consumer test RED → GREEN                │  │
+│  └───────────────────────────────────────────────┘  │
+│            ↓ contract artifact handoff              │
+│  ┌───────────────────────────────────────────────┐  │
+│  │  INNER LOOP n: Backend TDD                    │  │
+│  │  CDC provider test RED → GREEN                │  │
+│  │  Integration test RED → GREEN → Refactor      │  │
+│  │  Domain unit test RED → GREEN → Refactor      │  │
+│  └───────────────────────────────────────────────┘  │
+│            ↓ if still red: n+1                      │
+│  OUTER LOOP: Acceptance Test → GREEN ✓              │
+└─────────────────────────────────────────────────────┘
+```
+
+Key rules:
+
+- One outer acceptance test per AC. It is the sole definition of done.
+- Never write implementation code before the outer acceptance test and the relevant inner test are both red.
+- Frontend loop always precedes backend loop for the same `n`.
+- The CDC contract artifact is the only sanctioned handoff between frontend and backend loops.
+- All tests must be green locally before pushing; all gates must pass in CI before deploying.
+- See [`scenario-writing-guide.md`](scenario-writing-guide.md) for how to write correct ACs.
+- See [`contract-testing.md`](contract-testing.md) for the full CDC workflow.
