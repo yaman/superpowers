@@ -177,7 +177,14 @@ An AC is considered complete when:
 - The outer acceptance test passes against the real frontend and real backend implementation in a test environment.
 - All unit/component/CDC tests related to this AC are also green.
 
-Only then mark the AC as done.
+Once all checks are green, **commit and push** the work for this AC:
+
+1. Stage all changes: `git add -A`
+2. Commit with a message describing the completed AC, e.g.:
+   `git commit -m "feat: <AC description in domain language>"`
+3. Push to the current branch: `git push`
+
+Only then mark the AC as done and move to the next AC.
 
 ---
 
@@ -482,6 +489,7 @@ ATDD in this skill is a **double loop** per AC:
 │  └───────────────────────────────────────────────┘  │
 │            ↓ if still red: n+1                      │
 │  OUTER LOOP: Acceptance Test → GREEN ✓              │
+│            ↓ git commit & push                      │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -491,6 +499,7 @@ Key rules:
 - Never write implementation code before the outer acceptance test and the relevant inner test are both red.
 - Frontend loop always precedes backend loop for the same `n`.
 - The CDC contract artifact is the only sanctioned handoff between frontend and backend loops.
+- Commit and push immediately after each AC's outer acceptance test turns green and all related tests pass.
 - All tests must be green locally before pushing; all gates must pass in CI before deploying.
 - See [`scenario-writing-guide.md`](scenario-writing-guide.md) for how to write correct ACs.
 - See [`contract-testing.md`](contract-testing.md) for the full CDC workflow.
